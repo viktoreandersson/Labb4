@@ -1,0 +1,86 @@
+#include "mbed.h"
+//#include "USBMIDI.h"
+//#include "TextLCD.h"
+//#include "c12832.h"
+
+//TextLCD lcd(p11,p12,p13)
+InterruptIn upp(p5);
+InterruptIn ner(p6);
+Timer knappStuds;
+AnalogIn Pot(p19);
+Ticker program;
+
+DigitalOut led2(LED4);
+DigitalOut led(LED1);
+int BPM=60;
+int note;
+float speed=2;
+
+void toggle(){
+if( knappStuds.read_ms()>10){
+
+}
+    
+}
+
+void ISR1(){
+    led2=!led2;
+    printf("Avbruten %d\n", led2.read());
+
+    
+}
+
+void up(){
+  //  if (knappStuds.read_ms()>10){
+    BPM=BPM+4;
+    speed=BPM/60;
+    knappStuds.reset();
+//    }
+}
+void down(){
+  //  if (knappStuds.read_ms()>10){
+        
+    
+    BPM=BPM-4;
+    speed=BPM/60;
+    knappStuds.reset();
+//    }
+
+
+}
+
+void lampLjud(){
+    note=48+72*Pot.read();
+    led2=!led2;
+   // midi.write(MIDIMessage::noteOn);
+    wait_ms(10);
+    led2=!led2;
+ //   midi.write(MIDIMessage::noteOff);
+   // lcd.print("Metronom!\n");
+    //lcd.print("BPM: %d\n",BPM);
+    //lcd.locate(0,3);
+    printf("Metronom. BPM: %d", BPM);
+    
+}
+
+
+
+
+int main() {
+     // lcd.print("Metronom!\n");
+ //   knapp.rise(&ISR1);
+      knappStuds.start();
+      
+      upp.rise(&up);
+      ner.rise(&down);
+      program.attach(&lampLjud, speed);
+      
+    while (1) {
+        led = 1;
+        printf("Kör BPM %d\n", BPM);
+        printf("Kör Speed %d\n", speed);
+
+
+       wait_ms(50);
+    }
+}
