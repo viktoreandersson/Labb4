@@ -12,9 +12,9 @@ Ticker program;
 
 DigitalOut led2(LED4);
 DigitalOut led(LED1);
-int BPM=60;
+float BPM=60;
 int note;
-float speed=2;
+float speed=60/BPM;
 
 void toggle(){
 if( knappStuds.read_ms()>10){
@@ -33,7 +33,7 @@ void ISR1(){
 void up(){
   //  if (knappStuds.read_ms()>10){
     BPM=BPM+4;
-    speed=BPM/60;
+    speed=60/BPM;
     knappStuds.reset();
 //    }
 }
@@ -42,7 +42,7 @@ void down(){
         
     
     BPM=BPM-4;
-    speed=BPM/60;
+    speed=60/BPM;
     knappStuds.reset();
 //    }
 
@@ -60,6 +60,8 @@ void lampLjud(){
     //lcd.print("BPM: %d\n",BPM);
     //lcd.locate(0,3);
     printf("Metronom. BPM: %d", BPM);
+    program.attach(&lampLjud, speed);
+
     
 }
 
@@ -70,16 +72,17 @@ int main() {
      // lcd.print("Metronom!\n");
  //   knapp.rise(&ISR1);
       knappStuds.start();
-      
+      program.attach(&lampLjud, speed);
+
       upp.rise(&up);
       ner.rise(&down);
-      program.attach(&lampLjud, speed);
+     //program.attach(&lampLjud, speed);
       
     while (1) {
         led = 1;
-        printf("Kör BPM %d\n", BPM);
-        printf("Kör Speed %d\n", speed);
-
+        printf("Kör BPM %f\n", BPM);
+        printf("Kör Speed %f\n", speed);
+ 
 
        wait_ms(50);
     }
